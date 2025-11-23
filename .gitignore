@@ -19,3 +19,4 @@ Counter_cpp_RISC-V/.vscode/cmake-kits.json
 Counter_cpp_RISC-V/.vscode/launch.json
 *.json
 /Counter_cpp_RISC-V
+*.gitignore
