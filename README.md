@@ -2,6 +2,8 @@
 
 This repository should provide all the needed parts for the construction of low-cost entry-level Geiger Müller (GM) counter system. This counter was build by request from the students of 151-0163-00L  Nuclear Energy Conversion at ETH Zürich. 
 
+The repository itself is subdivided into two two main parts. The hardware parts contains all the relevant EDA files created in KiCAD v9. The software directory contains all the different code written and tested for and on the hardware.
+
 
 ## The Geiger Müller chamber :radioactive:
 The detector is based on either the chinese J321 GM-tube or the soviet SBM-20 GM-tube (can be varied by soldering the negative receptacle either into the spot closer or further away from the HV terminal). The J321 can be easily bought through Aliexpress or ebay whereas for the SBM-20 tube you need to revert to ebay only. 
@@ -9,10 +11,18 @@ Due to the overall bigger detection volume of the SBM-20 tube compared with the 
 
 
 ## Microcontroller requirements
-The microcontroller of choice here is the Rasperry Pico 2W, allowing for programming in a multitude of languages (Micropython, Arduino, C++, C), lowering the overall barrier to entry into microcontroller (uC) programming. But the PCB itself also supports the Pico W or any other uC with a fitting pin out. 
-The W version of the uC also offers a wireless chip set which supports WiFi as well as Bluetooth connectivity, for which a micropython example is available. This example sends the activity according to the Bluetooth LE standard wirelessly to a receiving device.  
+The microcontroller of choice here is the Rasperry Pico 2W (rp2350 + wifi chipset), allowing for programming in a multitude of languages (Micropython, Arduino, C++, C), lowering the overall barrier to entry into microcontroller (uC) programming. But the PCB itself also supports the Pico W or any other uC with a fitting pin out. 
+The W version of the uC also offers a wireless chip set which supports WiFi as well as Bluetooth connectivity, for which a micropython example is available. This example sends the activity according to the Bluetooth LE standard wirelessly to a receiving device. 
+But in case of budgetary concerns a Rasperry Pico can also be used as a drop-in replacement. The RISC-V based implementation in this repository might then not work, though.
 
-## Electronic assembly
+## Electronics
+
+### Parts sourcing
+The sourcing of the components for this project was done entirely through the [LCSC](https://www.lcsc.com/) except for the GM-tube as well as the Raspberry Pico 2W. The GM-tube was bought off [EBAY SBM-20 search](https://www.ebay.com/sch/i.html?_nkw=sbm20&_sacat=0&_from=R40&_trksid=p4624852.m570.l1313) and the Pico 2W can be bought from your local electronics reseller.
+
+### PCB manufacturing
+The custom printed circuit board (PCB) itself was produced by sending the relevant gerber files to [JLCPCB](https://www.jlcpcb.com/) and choosing a black finish apart from that there is nothing special to consider when ordering them. The relevant gerber files are all merged into a single zip. This zip can be found in the hardware part of this repository.
+
 
 ### BOM 
 | LCSC part number | Part description                                          | Amount | Price per piece (USD/piece) | Label of Part on PCB                    |
