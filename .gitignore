@@ -20,3 +20,4 @@ Counter_cpp_RISC-V/.vscode/launch.json
 *.json
 /Counter_cpp_RISC-V
 *.gitignore
+.DS_Store
