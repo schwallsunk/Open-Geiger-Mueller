@@ -4,7 +4,7 @@ This repository should provide all the needed parts for the construction of low-
 
 The repository itself is subdivided into two two main parts. The hardware parts contains all the relevant EDA files created in KiCAD v9. The software directory contains all the different code written and tested for and on the hardware.
 
-![Both GM-counters completed with J321 GM-tube as well as SBM-20 tube](https://github.com/schwallsunk/Open-Geiger-Mueller/resources/Both_versions_GM.png)
+![Both GM-counters completed with J321 GM-tube as well as SBM-20 tube](https://github.com/schwallsunk/Open-Geiger-Mueller/blob/main/resources/Both_versions_GM.png)
 
 
 ## The Geiger Müller chamber :radioactive:
