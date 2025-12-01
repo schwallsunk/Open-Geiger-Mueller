@@ -12,10 +12,21 @@ The detector is based on either the chinese J321 GM-tube or the soviet SBM-20 GM
 Due to the overall bigger detection volume of the SBM-20 tube compared with the J321 tube, the sensitivity of the soviet tube will be much higher at the cost of roughly double the price of the J321 tube.
 
 
-## Microcontroller requirements
+## Microcontroller
 The microcontroller of choice here is the Rasperry Pico 2W (rp2350 + wifi chipset), allowing for programming in a multitude of languages (Micropython, Arduino, C++, C), lowering the overall barrier to entry into microcontroller (uC) programming. But the PCB itself also supports the Pico W or any other uC with a fitting pin out. 
 The W version of the uC also offers a wireless chip set which supports WiFi as well as Bluetooth connectivity, for which a micropython example is available. This example sends the activity according to the Bluetooth LE standard wirelessly to a receiving device. 
-But in case of budgetary concerns a Rasperry Pico can also be used as a drop-in replacement. The RISC-V based implementation in this repository might then not work, though.
+But in case of budgetary concerns, a Rasperry Pico can also be used as a drop-in replacement. The RISC-V-based implementation in this repository might then not work, though.
+
+### Without IDE install
+For an easier starting point, there is a precompiled firmware already available in this repository under [FW-file](https://github.com/schwallsunk/Open-Geiger-Mueller/blob/main/software/cpp/Counter_cpp_RISC-V.uf2). This file can be easily flashed by holding down the only button on the Raspberry Pico and plugging it into the USB port of the PC. 
+The Pico will then appear as a mass storage device (The button on the Pico can be released at this point ) onto which the given firmware .uf2 file can be dragged and dropped onto it. The microcontroller will reboot by itself as soon as the new firmware file is fully transferred.
+From there on, the clicking noise of the background radiation should be heard.
+
+
+### IDE firmware development
+If the goal is to do micropython code development, the following documentation [chapter 4](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-python-sdk.pdf) might be useful. All the given Micropython examples can be copied and pasted into the IDE and directly deployed. 
+For the C/C++ code part, there is either a way to do full code development with the [C/C++ IDE](https://pip-assets.raspberrypi.com/categories/610-raspberry-pi-pico/documents/RP-008276-DS-1-getting-started-with-pico.pdf?disposition=inline), where the given code example can be copied and pasted into the given editor and then, at a later stag,e converted into a binary.  
+
 
 ## Electronics
 
