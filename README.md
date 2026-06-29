@@ -1,6 +1,6 @@
 # Open Geiger Müller Counter
 
-This repository should provide all the needed parts for the construction of low-cost entry-level Geiger Müller (GM) counter system. This counter was build by request from the students of 151-0163-00L  Nuclear Energy Conversion at ETH Zürich. 
+This repository should provide all the needed parts for the construction of low-cost entry-level Geiger Müller (GM) counter system. This counter was build by request from the students of 151-0163-00L  Nuclear Energy Conversion at ETH Zürich. For a more complete description of the project please read the [manual](https://github.com/schwallsunk/Open-Geiger-Mueller/blob/main/Geiger_counter_manual_final.pdf).
 
 The repository itself is subdivided into two two main parts. The hardware parts contains all the relevant EDA files created in KiCAD v9. The software directory contains all the different code written and tested for and on the hardware.
 
