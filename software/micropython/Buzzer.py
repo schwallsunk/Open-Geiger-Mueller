@@ -41,13 +41,13 @@ pwm_hv_plus.duty_u16(55000)
 while True:
     try:
         if not switch_1.value():
-            print("button is pressed")
+            print("button is pressed !")
             pin_B.toggle()
             sleep(0.2) # sleep 1sec
             pin_G.toggle()
             sleep(0.2)
             pin_R.toggle()
-            print("Done with my light spiel")
+            print("Done with my light spiel !")
         if not switch_2.value():
             print("Button 2")
             print(total)
@@ -57,7 +57,7 @@ while True:
             print("button 3")
         if not switch_4.value():
             pwm_hv_plus.duty_u16(0)
-            print("HV is off") 
+            print("HV is off !") 
         if not hv_tube_neg.value():
             buzzer.toggle()
             pin_R.toggle()
