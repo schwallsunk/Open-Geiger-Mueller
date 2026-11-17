@@ -1,0 +1,141 @@
+__author__ = "Saioul Ngoun and Axel Monney"
+__copyright__ = "Copyright 2026, NS-ECMF Open Geiger Mueller project"
+__license__ = "GPL"
+__version__ = "1.0.0"
+__status__ = "Production"
+
+
+from micropython import const
+import asyncio
+import aioble
+import bluetooth
+import struct
+
+from machine import Pin,PWM,Timer
+from utime import sleep
+import micropython
+
+micropython.alloc_emergency_exception_buf(100)
+
+PERIOD_OF_COUNTER = 500
+#org.bluetooth.service.environmental_sensing (Seemed reasonable => Looked at the BLE spec sheet for the most reasonable)
+_ENV_SENSE_UUID = bluetooth.UUID(0x181A)
+# org.bluetooth.characteristic.activity referred to a radionuclide
+_ENV_SENSE_TEMP_UUID = bluetooth.UUID(0x2732)
+# org.bluetooth.characteristic.gap.appearance.xml (Did not find anything better yet)
+_ADV_APPEARANCE_GENERIC_THERMOMETER = const(768)
+# How frequently to send advertising beacons.
+_ADV_INTERVAL_MS = 250_000
+
+# Register GATT server.
+temp_service = aioble.Service(_ENV_SENSE_UUID)
+temp_characteristic = aioble.Characteristic(
+temp_service, _ENV_SENSE_TEMP_UUID, read=True, notify=True)
+aioble.register_services(temp_service)
+
+# Setup of counter values and arrays
+
+total = 0 
+
+floating_avg_arr = [0,0,0,0,0,0,0,0,0,0]
+
+# General setup of I/O pins in which direction which pins operate
+
+pin = Pin("LED", Pin.OUT)
+pin_R = Pin(13,Pin.OUT)
+pin_G = Pin(15,Pin.OUT)
+pin_B = Pin(14,Pin.OUT)
+
+# Ensure initial state of RGB LED pins
+pin_B.high() 
+pin_G.high()
+pin_R.high()
+
+
+
+
+switch_1 = Pin(4, Pin.IN, Pin.PULL_UP)
+switch_2 = Pin(5, Pin.IN, Pin.PULL_UP)
+switch_3 = Pin(6, Pin.IN, Pin.PULL_UP)
+switch_4 = Pin(7, Pin.IN, Pin.PULL_UP)
+
+buzzer = Pin(21,Pin.OUT)
+
+hv_tube_plus = Pin(16, Pin.OUT) # PWM of switching HV transformer transistor
+hv_tube_neg = Pin(22, Pin.IN) # Output that falls low if ionization is detected
+
+
+# Setup of HV switching PSU timing
+pwm_hv_plus=PWM(hv_tube_plus)   # Setup of PWM pin for the HV transformer to ensure the HV supply of the tube
+pwm_hv_plus.freq(6000) # frequency of PWM signal
+print("HV gets turned on")
+pwm_hv_plus.duty_u16(55705) # Duty cycle of PWM signal
+
+
+# Interrupt function for counting ionizations in tube
+def handle_interrupt(Pin):
+    global total
+    total = total+1
+    buzzer.toggle()
+
+def handle_counter(Pin):
+    global total
+    global floating_avg_arr
+    floating_avg_arr.pop(0)
+    floating_avg_arr.append(total)
+    total = 0
+
+tim = Timer(-1,period=PERIOD_OF_COUNTER, mode=Timer.PERIODIC, callback=handle_counter)
+tim.init(period=PERIOD_OF_COUNTER, mode=Timer.PERIODIC, callback=handle_counter)
+# Interrupt handle setup for ionization
+irq_ionization = hv_tube_neg.irq(trigger=Pin.IRQ_FALLING, handler=handle_interrupt)
+
+
+def count():
+    global floating_avg_arr
+    total_counts = sum(floating_avg_arr)
+    counts_per_second = total_counts/(len(floating_avg_arr)*PERIOD_OF_COUNTER/1000)
+    return counts_per_second
+
+
+# Helper to encode the temperature characteristic encoding
+# (sint16, tenths of a Bq).
+def _encode_temperature(temp_deg_c):
+    return struct.pack("<h", int(temp_deg_c * 10))
+
+# Get temperature and update characteristic
+async def sensor_task():
+    while True:
+        temperature = count()
+        temp_characteristic.write(_encode_temperature(temperature), send_update=True)
+        print(temperature)
+        await asyncio.sleep_ms(1000)
+        
+# Serially wait for connections. Don't advertise while a central is connected.
+async def peripheral_task():
+    while True:
+        try:
+            async with await aioble.advertise(
+                _ADV_INTERVAL_MS,
+                name="RPi-Pico",
+                services=[_ENV_SENSE_UUID],
+                appearance=_ADV_APPEARANCE_GENERIC_THERMOMETER,
+                ) as connection:
+                    print("Connection from", connection.device)
+                    await connection.disconnected()
+        except asyncio.CancelledError:
+            # Catch the CancelledError
+            print("Peripheral task cancelled")
+        except Exception as e:
+            print("Error in peripheral_task:", e)
+        finally:
+            # Ensure the loop continues to the next iteration
+            await asyncio.sleep_ms(100)
+
+# Run both tasks
+async def main():
+    t1 = asyncio.create_task(sensor_task())
+    t2 = asyncio.create_task(peripheral_task())
+    await asyncio.gather(t1, t2)
+    
+asyncio.run(main())
