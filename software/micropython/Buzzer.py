@@ -35,7 +35,7 @@ pin_G.high()
 pin_R.high()
 
 pwm_hv_plus.freq(6000)
-print("HV gets turned on")
+print("HV gets turned on !")
 pwm_hv_plus.duty_u16(55000)
 
 while True:
@@ -63,5 +63,5 @@ while True:
             pin_R.toggle()
     except KeyboardInterrupt:
         break
-print("Finished.")
+print("Finished !")
 
